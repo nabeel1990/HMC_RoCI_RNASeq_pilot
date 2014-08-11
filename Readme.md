@@ -31,7 +31,7 @@ c) RSEM
 The user also has the flexibility of choosing the source of the reference genome to be used for aligning the RNa-seq reads.
 a) UCSC's hg19
 b) ENSEMBL's GRCh37 or
-c) GENCODe v19
+c) GENCODE v19
 
 Sample usage:
 
