@@ -39,7 +39,7 @@ def get_genome_ref_files(reference):
 	Location of all reference files needed for human genome. Reference files for other model organisms will be added shortly. 
 	The user has the choice to select the source of the reference genome. It can be either UCSC's hg19 or ENSEMBL's GRCh37 or GENCODe's release 19
 	"""
-	if reference == "UCSC_hg19":
+	if reference == "UCSC":
 		ref_index = "/gpfs/work/nxa176/hg19_bt2_indices"
 		fa = "/gpfs/home/nxa176/scratch/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa"
 		gtf = "/gpfs/work/nxa176/hg19_bt2_indices/hg19_genes.gtf"
@@ -70,7 +70,7 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
 	Dispatches an pbs job to locate fastq files that were provided by the sequencer and then:
 	1) Run fastqc
 	2) Get unique reads 
-	3) Run tophat/STAT/RSEM to align reads to reference genome(ENSEMBL/UCSC/GENCODE)
+	3) Run Tophat/STAT/RSEM to align reads to reference genome(ENSEMBL/UCSC/GENCODE)
 	4) Obtain various QC metrics on aligned files
 	5) Run cufflinks to quantify all other transcripts in sample
 	
@@ -179,7 +179,7 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
 		if library_type in ["PE", "SPE"]:
 			outp.write("cat "+R2+" | awk '((NR-2)%4==0){read=$1;total++;count[read]++}END{for(read in count){if(count[read]==1){unique++}};print total,unique,unique*100/total}' >> "+curr_sample+"_ReadCount\n")
 		
-		if alignment_tool == "tophat":
+		if alignment_tool == "Tophat":
                 #Run TopHat with options specific to library typeoutp.write("cd "+out_dir+"/star_output/\n")
                         if discovery == "no":
                         	if library_type == "PE":
@@ -207,10 +207,10 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
               		#Write out bamtools summary stats:
               		outp.write("bamtools stats -in "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.bamstats\n")
            
-           	elif alignment_tool == "rsem":
+           	elif alignment_tool == "RSEM":
                		outp.write("rsem-calculate-expression -p 12 --output-genome-bam --bowtie2 --paired-end"+R1+" "+R2+" "+ref_index+" "+out_dir+"/rsem_output/"+curr_sample+"accepted_hits \n")
                		outp.write("cd "+out_dir+"/rsem_output/\n")
-           	elif alignment_tool == "star":
+           	elif alignment_tool == "STAR":
                		outp.write("/gpfs/work/nxa176/STAR --genomeDir "+ref_index+" --readFilesIn "+R1+" "+R2+" --runThreadN 12 --outFileNamePrefix "_out_dir+"/star_output/"+curr_sample+"\n")
                		outp.write("cd "+out_dir+"/star_output/\n")
         		#Create sorted bam file:
@@ -261,8 +261,8 @@ if __name__ == "__main__":
 	parser.add_argument("--discovery", default="yes", type=str, help="Should TopHat be run with options to discover novel transcripts (i.e. disable --no-novel-juncs --transcriptome-only)? "
 		"(options: yes, no; default=yes) "
 		"Note: the 'no' option only works with hg19 at the moment")
-      parser.add_argument("--reference",default="UCSC_hg19",type=str,help="Choose one of the following reference: 1) UCSC_hg19 (Default) 2) ENSEMBL (GRCh37) or 3) GENCODE (v19)")
-      parser.add_argument("--alignment_tool",default="tophat",type=str,help="Choose one of the following alignment tool: 1) tophat (Default) 2) rsem 3) star ")
+      parser.add_argument("--reference",default="UCSC_hg19",type=str,help="Choose one of the following reference: 1) UCSC (Default) 2) ENSEMBL (GRCh37) or 3) GENCODE (v19)")
+      parser.add_argument("--alignment_tool",default="Tophat",type=str,help="Choose one of the following alignment tool: 1) Tophat (Default) 2) RSEM 3) STAR ")
 	parser.add_argument("--path_start", default="./", type=str, help="Directory path where PCPGM batch-level directories are located and report directory will be written (default=./)")
 	parser.add_argument("samples_in", help="Path to a tab-delimited txt file containing sample information. See example file: sample_info_file.txt")
 	args = parser.parse_args()
