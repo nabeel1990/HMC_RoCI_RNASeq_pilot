@@ -9,9 +9,9 @@ def get_sample_info(fin):
 	Open tab-delimited txt file containing the following columns:
 	
 	v0: file_directory	| Directory where sample's files were written to by Casava
-	v1: batch			| batch number associated with sample
-      v2: customer_ID		| ID given to sample 
-	v3: label			| Biological condition associated with the sample, provided by customer
+	v1: batch		| batch number associated with sample
+        v2: customer_ID		| ID given to sample 
+	v3: label		| Biological condition associated with the sample, provided by customer
 	v4: ref_genome		| Rerence genome associated with sample. (options: "hg19", "Zv9", "mm10")
 	v5: library_type	| Type of library for sample (options: "PE", "SE", "DGE", "SPE",
 							corresponding to: "paired-end", "single-end", "digital gene expression", "stranded paired-end")
@@ -26,7 +26,7 @@ def get_sample_info(fin):
 		if top_dir[-1] != "/":
 			top_dir = top_dir+"/"
 		batch = x.split('\t')[1]
-           customer_id = x.split('\t')[2]
+                customer_id = x.split('\t')[2]
 		label = x.split('\t')[3]
 		ref_genome = x.split('\t')[4]
 		library_type = x.split('\t')[5]
@@ -120,7 +120,7 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
 		outp.write("module load bowtie/2.1.0\n")
 		outp.write("module load tophat\n")
 		outp.write("module load samtools\n")
-           outp.write("module load cufflinks\n")
+                outp.write("module load cufflinks\n")
             
   
 		#Check whether unaligned fastq files that were processed from the sequencer are zipped and make local unzipped copies
@@ -142,22 +142,22 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
 		outp.write("cd "+out_dir+"\n")
 		
 		#Since we will be getting fastq files with all adapters removed,the following section is currently not required
-           '''
-           #Perform adapter trimming with trimmomatic
-           #May perform a standard trimming of bases from reads by amount given above if standard_trim variable is greater than 0. Most will use standard_trim=0 
-           #Create fa file of adapters specific to file
-           if library_type in ["PE", "SE", "SPE"]:
-               make_adapter_fa(index, illumina_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
+                '''
+        	#Perform adapter trimming with trimmomatic
+        	#May perform a standard trimming of bases from reads by amount given above if standard_trim variable is greater than 0. Most will use standard_trim=0 
+        	#Create fa file of adapters specific to file
+        	if library_type in ["PE", "SE", "SPE"]:
+        	     make_adapter_fa(index, illumina_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
 		elif library_type == "DGE":
-			make_adapter_fa(index, nextflex_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
-		if standard_trim == 0:
-			R1_trim = out_dir+curr_sample+"_R1_Trimmed.fastq"
-			R2_trim = out_dir+curr_sample+"_R2_Trimmed.fastq"		
-			if library_type in ["PE", "SPE"]:
-				make_adapter_fa(index, illumina_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
-				outp.write("java -Xmx1024m  org.usadellab.trimmomatic.TrimmomaticPE -phred33 "+local_R1+" "+local_R2+" "+R1_trim+" R1_Trimmed_Unpaired.fastq "+R2_trim+" R2_Trimmed_Unpaired.fastq ILLUMINACLIP:"+out_dir+curr_sample+"_adapter.fa:2:30:10 MINLEN:50\n")
-			elif library_type in ["SE", "DGE"]:				
-				outp.write("java -Xmx1024m  org.usadellab.trimmomatic.TrimmomaticSE -phred33 "+local_R1+" "+R1_trim+" ILLUMINACLIP:"+out_dir+curr_sample+"_adapter.fa:2:30:10 MINLEN:50\n")
+   	             make_adapter_fa(index, nextflex_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
+	  	if standard_trim == 0:
+		      R1_trim = out_dir+curr_sample+"_R1_Trimmed.fastq"
+		      R2_trim = out_dir+curr_sample+"_R2_Trimmed.fastq"		
+	              if library_type in ["PE", "SPE"]:
+			make_adapter_fa(index, illumina_indexes, out_dir+curr_sample+"_adapter.fa", library_type)
+			outp.write("java -Xmx1024m  org.usadellab.trimmomatic.TrimmomaticPE -phred33 "+local_R1+" "+local_R2+" "+R1_trim+" R1_Trimmed_Unpaired.fastq "+R2_trim+" R2_Trimmed_Unpaired.fastq ILLUMINACLIP:"+out_dir+curr_sample+"_adapter.fa:2:30:10 MINLEN:50\n")
+		      elif library_type in ["SE", "DGE"]:				
+			outp.write("java -Xmx1024m  org.usadellab.trimmomatic.TrimmomaticSE -phred33 "+local_R1+" "+R1_trim+" ILLUMINACLIP:"+out_dir+curr_sample+"_adapter.fa:2:30:10 MINLEN:50\n")
 		else:
 			R1_trim = out_dir+curr_sample+"_R1_Trim"+str(standard_trim)+".fastq"
 			R2_trim = out_dir+curr_sample+"_R2_Trim"+str(standard_trim)+".fastq"
@@ -180,47 +180,47 @@ def main(sample_info_file, discovery, alignment_tool, reference, path_start):
 			outp.write("cat "+R2+" | awk '((NR-2)%4==0){read=$1;total++;count[read]++}END{for(read in count){if(count[read]==1){unique++}};print total,unique,unique*100/total}' >> "+curr_sample+"_ReadCount\n")
 		
 		if alignment_tool == "tophat":
-              #Run TopHat with options specific to library typeoutp.write("cd "+out_dir+"/star_output/\n")
-              if discovery == "no":
-                  if library_type == "PE":
-				outp.write("tophat --library-type fr-unstranded -G "+ gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
-     			 elif library_type == "SPE":
-				outp.write("tophat --library-type fr-firststrand -G "+gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
-			 elif library_type in ["DGE", "SE"]:
-				outp.write("tophat --library-type fr-unstranded -G "+gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+"\n")
+                #Run TopHat with options specific to library typeoutp.write("cd "+out_dir+"/star_output/\n")
+                        if discovery == "no":
+                        	if library_type == "PE":
+					outp.write("tophat --library-type fr-unstranded -G "+ gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
+     				elif library_type == "SPE":
+					outp.write("tophat --library-type fr-firststrand -G "+gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
+				elif library_type in ["DGE", "SE"]:
+					outp.write("tophat --library-type fr-unstranded -G "+gtf+" --no-novel-juncs --transcriptome-only -r 50 -p 12 "+ref_index+" "+R1+"\n")
 		
-		   elif discovery == "yes":
-                 if library_type == "PE":
-				outp.write("tophat --library-type fr-unstranded -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
-			elif library_type == "SPE":
-				outp.write("tophat --library-type fr-firststrand -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
-			elif library_type in ["DGE", "SE"]:
-				outp.write("tophat --library-type fr-unstranded -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+"\n")
-              #Get samtools mapping stats
-              outp.write("cd "+out_dir+"/tophat_out/\n")
-              #Create sorted bam file:
-              outp.write("samtools sort accepted_hits.bam "+curr_sample+"_accepted_hits.sorted\n")
-              #Create indexed bam file:
-              outp.write("samtools index "+curr_sample+"_accepted_hits.sorted.bam\n")
-              #Write out index stats of where reads align to by chr:
-              outp.write("samtools idxstats "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.stats\n")
-              #Write out bamtools summary stats:
-              outp.write("bamtools stats -in "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.bamstats\n")
+		    	elif discovery == "yes":
+                 		if library_type == "PE":
+					outp.write("tophat --library-type fr-unstranded -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
+				elif library_type == "SPE":
+					outp.write("tophat --library-type fr-firststrand -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+" "+R2+"\n")
+				elif library_type in ["DGE", "SE"]:
+					outp.write("tophat --library-type fr-unstranded -G "+gtf+" -r 50 -p 12 "+ref_index+" "+R1+"\n")
+              		#Get samtools mapping stats
+              		outp.write("cd "+out_dir+"/tophat_out/\n")
+              		#Create sorted bam file:
+        	   	outp.write("samtools sort accepted_hits.bam "+curr_sample+"_accepted_hits.sorted\n")
+              		#Create indexed bam file:
+              		outp.write("samtools index "+curr_sample+"_accepted_hits.sorted.bam\n")
+              		#Write out index stats of where reads align to by chr:
+              		outp.write("samtools idxstats "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.stats\n")
+              		#Write out bamtools summary stats:
+              		outp.write("bamtools stats -in "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.bamstats\n")
            
-           elif alignment_tool == "rsem":
-               outp.write("rsem-calculate-expression -p 12 --output-genome-bam --bowtie2 --paired-end"+R1+" "+R2+" "+ref_index+" "+out_dir+"/rsem_output/"+curr_sample+"accepted_hits \n")
-               outp.write("cd "+out_dir+"/rsem_output/\n")
-           elif alignment_tool == "star":
-               outp.write("/gpfs/work/nxa176/STAR --genomeDir "+ref_index+" --readFilesIn "+R1+" "+R2+" --runThreadN 12 --outFileNamePrefix "_out_dir+"/star_output/"+curr_sample+"\n")
-               outp.write("cd "+out_dir+"/star_output/\n")
-               #Create sorted bam file:
-               outp.write("samtools view -bS "+curr_sample+"_Aligned.out.sam | samtools sort - "+curr_sample+"_accepted_hits.sorted\n")	
-		    #Create indexed bam file:
-               outp.write("samtools index "+curr_sample+"_accepted_hits.sorted.bam\n")
-               #Write out index stats of where reads align to by chr:
-               outp.write("samtools idxstats "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.stats\n")
-               #Write out bamtools summary stats:
-               outp.write("bamtools stats -in "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.bamstats\n")
+           	elif alignment_tool == "rsem":
+               		outp.write("rsem-calculate-expression -p 12 --output-genome-bam --bowtie2 --paired-end"+R1+" "+R2+" "+ref_index+" "+out_dir+"/rsem_output/"+curr_sample+"accepted_hits \n")
+               		outp.write("cd "+out_dir+"/rsem_output/\n")
+           	elif alignment_tool == "star":
+               		outp.write("/gpfs/work/nxa176/STAR --genomeDir "+ref_index+" --readFilesIn "+R1+" "+R2+" --runThreadN 12 --outFileNamePrefix "_out_dir+"/star_output/"+curr_sample+"\n")
+               		outp.write("cd "+out_dir+"/star_output/\n")
+        		#Create sorted bam file:
+               		outp.write("samtools view -bS "+curr_sample+"_Aligned.out.sam | samtools sort - "+curr_sample+"_accepted_hits.sorted\n")	
+		    	#Create indexed bam file:
+        		outp.write("samtools index "+curr_sample+"_accepted_hits.sorted.bam\n")
+               		#Write out index stats of where reads align to by chr:
+        		outp.write("samtools idxstats "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.stats\n")
+        		#Write out bamtools summary stats:
+               		outp.write("bamtools stats -in "+curr_sample+"_accepted_hits.sorted.bam > "+curr_sample+"_accepted_hits.sorted.bamstats\n")
                
            
 		#Run CollectRnaSeqMetrics
