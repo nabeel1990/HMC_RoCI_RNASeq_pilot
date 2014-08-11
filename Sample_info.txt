@@ -1,0 +1,2 @@
+File_Directory	Batch	Sample	Label	Reference_genome	Library_type
+/gpfs/scratch/nxa176/Example_dataset	ERR	ERR188040	1	hg19	PE
