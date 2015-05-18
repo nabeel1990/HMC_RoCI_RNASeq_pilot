@@ -2,8 +2,8 @@
 import sys
 import subprocess
 import os
-from rnaseq_align_and_qc import *
-from rnaseq_de import *
+from Step1_QC_alignment import *
+from Step3_diff_exp import *
 
 
 def make_de_rnw_html(rnw_template, project_name, path_start, gtf, ref_genome):
