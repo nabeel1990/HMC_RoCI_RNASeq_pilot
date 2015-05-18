@@ -1,14 +1,14 @@
-if (aligner == "tophat") total.read.data <- read.table(paste(curr.batch,"_read_counts.txt", sep=""), header=T, sep="\t")
+total.read.data <- read.table(paste(curr.batch,"_read_counts.txt", sep=""), header=T, sep="\t")
 metrics.data <- read.table(paste(curr.batch,"_rnaseqmetrics_hist.txt", sep=""), header=T)
 counts.data <- read.table(paste(curr.batch,"_counts.txt", sep=""), header=T, sep="\t")
 summary.data <- read.table(paste(curr.batch,"_rnaseqmetrics_summary.txt", sep=""), header=T, as.is=T, sep="\t")
 bamstats.data <- read.table(paste(curr.batch,"_bamstats_counts.txt", sep=""), header=T, as.is=T, sep="\t")
 if (library.type %in% c("PE", "SPE")) {
-	insert.summary.data <- read.table(paste(curr.batch,"_insertmetrics_summary.txt", sep=""), header=T, as.is=T, sep="\t")
+	insert.summary.data <- read.table(paste(curr.batch,"_insertmetrics_summary.txt", sep=""), header=T, as.is=T,sep="\t")
 	insert.metrics.data <- data.frame(c(0:1))
 	names(insert.metrics.data) <- "Insert_Size"
 	for (i in c(1:length(sample.names))){
-		curr.hist.data <- read.table(paste(curr.batch,"_",sample.names[i],"_insertmetrics_hist.txt", sep=""), header=T, as.is=T, sep="\t")
+		curr.hist.data <- read.table(paste(curr.batch,"_",sample.names[i],"_insertmetrics_hist.txt", sep=""),header=T, as.is=T, sep="\t")
 		insert.metrics.data <- merge(insert.metrics.data, curr.hist.data, all=TRUE)
 		}
 	}
@@ -37,7 +37,7 @@ tophat --library-type fr-unstranded -G [ref+ERCC gtf] --no-novel-juncs --transcr
 </blockquote>
 If default TopHat options were selected: <br>
 <blockquote>
-tophat --library-type fr-unstranded -G [ref+ERCC gtf] -p 12 [ref_genome_index] [sample_R1] [sample_R2] <br>
+tophat --library-type fr-unstranded -G [ref gtf] -p 12 [ref_genome_index] [sample_R1] [sample_R2] <br>
 </blockquote>
 
 Using TopHat/STAR/RSEM output files accepted_hits.bam and unmapped.bam:<br>
@@ -78,11 +78,12 @@ if (library.type %in% c("PE", "SPE")) {
 	names(unique.counts.data.2)[5] <- "Fastqc_Total_Duplicate_Estimate"
 	}
 print(xtable(unique.counts.data.2, caption="Total Number of Raw Reads Summary"), type="html", label="tab:zero", table.placement="tbp", caption.placement="top")
+library(png)
 @
 
 <<unique.read.plot,echo=FALSE,results=hide,fig=FALSE>>=
 png(paste("Unique_Reads_",curr.batch,".png", sep=""), width=4, height=3, units="in", pointsize=6, res=300)
-par(mai=c(0.5,0.5,0.5,1))   
+par(mai=c(0.5,0.5,0.5,1))
 if (library.type %in% c("PE", "SPE")) {
 	unique.counts.only = rbind(unique.counts.data$R1_Percent_Unique, unique.counts.data$R2_Percent_Unique)
 	barplot(unique.counts.only, beside=TRUE, ylim=c(0,100), col=c("red", "darkblue"), border=NA, main=curr.batch, xlab="Sample", ylab="Percentage of Unique Reads in Original Fastq File", names.arg=c(1:length(unique.counts.data$Sample)), cex.axis=0.9)
@@ -143,8 +144,8 @@ if (aligner == "tophat") {
 <<read2.table,echo=FALSE>>=
 if (library.type %in% c("PE", "SPE")) {
 	bamstats.summary <- bamstats.data[c(2:4, 7:14), c(2:length(names(bamstats.data))), drop=FALSE]
-	bamstats.summary <- rbind(bamstats.summary, apply(bamstats.data[c(2,14),-1, drop=FALSE], 2, sum))
-	row.names(bamstats.summary) <- c(bamstats.data[c(2:4, 7:14), 1], "Total Reads")
+    bamstats.summary <- rbind(bamstats.summary, apply(bamstats.data[c(2,14),-1, drop=FALSE], 2, sum))
+    row.names(bamstats.summary) <- c(bamstats.data[c(2:4, 7:14), 1], "Total Reads")
 	} else {
 	bamstats.summary <- bamstats.data[c(2:4, 8:9), c(2:length(names(bamstats.data))), drop=FALSE]
 	bamstats.summary <- rbind(bamstats.summary, apply(bamstats.data[c(2,9),-1, drop=FALSE], 2, sum))
