@@ -78,7 +78,7 @@ The report can be opened with the file:
 
 
 
-Alternate differential gene expression analysis using R:
+###Alternate differential gene expression analysis using R:
 
 Alternatively, we can also use edgeR or DESeq2 to complete the differential gene expression analysis. But we need to generate raw counts for this data as cufflinks estimates the FPKM values. 
 Raw counts can be generated through featureCounts program(http://bioinf.wehi.edu.au/featureCounts/) which is part of the SubRead package by the script generate_raw_counts.py. Ensure that you have featureCounts installed on your machine.
