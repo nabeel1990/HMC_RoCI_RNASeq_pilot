@@ -35,15 +35,21 @@ c) GENCODE v19
 
 Sample usage:
 
-> python rnaseq_align.py --alignment_tool STAR --reference ENSEMBL --path_start /gpfs/work/nxa176/ Sample_info.txt
+> python rnaseq_align.py --alignment_tool star --reference hg19 --path_start /gpfs/work/nxa176/ Sample_info.txt
 
+This script will generate a pbs job file for each sample in the Sample_info.txt file. The output files will be created for each individual sample in a folder "Sample_<sample_name>" under the <path_start> location. 
+For each of the sample, 
+  i) Trimmomatic will be run on the paired end sample 
+  ii) FastQC will be run on both the raw fastq files and also the trimmed fastq files.These files will be stored in the     FastQC_results folder in the sample directory
+  iii)Aligned reads will be stored in the sorted and indexed BAM format in the <aligner>_<reference>_output folder in the sample directory
+  iv) Statistics of input reads and mapped reads will be stored in a set of files in Metrics folder in the sample directory
 
 2) Create an HTML report of QC and alignment summary statistics for RNA-seq samples associated with a project using rnaseq_align_and_qc_report.py:
 
-> python rnaseq_align_and_qc_report.py --alignment_tool STAR --reference ENSEMBL <i>project_name</i> <i>sample_info_file.txt</i>
+> python rnaseq_align_and_qc_report.py --alignment_tool star --reference hg19 <i>project_name</i> <i>sample_info_file.txt</i>
 
 Ensure that the alignment_tool and reference files used to align the reads in Step 1 remains the same for the rest of the steps.	
-This script uses the many output files created in step 1), converts these sample-specific files into matrices that include data for all samples, and then creates an Rnw document (main template is rnaseq_align_and_qc_report_Rnw_template.txt) that is converted into an html report using R/Sweave. The report and accompanying files are contained in:
+This script uses the many output files created in step 1, converts these sample-specific files into matrices that include data for all samples, and then creates an Rnw document (main template is rnaseq_align_and_qc_report_Rnw_template.txt) that is converted into an html report using R/Sweave. The report and accompanying files are contained in:
 
 > <i>project_name</i>/<i>project_name</i>_Alignment_QC_Report/
 
@@ -70,9 +76,5 @@ The report can be opened with the file:
 
 > <i>project_name</i>/<i>project_name</i>_DE_Report/<i>project_name</i>_DE_RnaSeqReport.html
 
-5) Create a report of differentially expressed results for a given set of genes of interest. 
 
-> python rnaseq_gene_subset_de_report.py <i>project_name</i> <i>sample_info_file.txt</i> <i>gene_list_file.txt</i>
-
-where the <i>gene_list_file.txt</i> contains "gene_id" names matching those of the cuffdiff output file, one per line.
 
