@@ -3,7 +3,7 @@ __author__ = 'nxa176'
 import sys
 import subprocess
 import os
-from rnaseq_align_and_qc import *
+from Step1_QC_alignment import *
 
 
 def main(sample_info_file, alignment_tool, reference, path_start):
