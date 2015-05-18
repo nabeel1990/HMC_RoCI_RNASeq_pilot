@@ -78,3 +78,11 @@ The report can be opened with the file:
 
 
 
+Alternate differential gene expression analysis using R:
+
+Alternatively, we can also use edgeR or DESeq2 to complete the differential gene expression analysis. But we need to generate raw counts for this data as cufflinks estimates the FPKM values. 
+Raw counts can be generated through featureCounts program(http://bioinf.wehi.edu.au/featureCounts/) which is part of the SubRead package by the script generate_raw_counts.py. Ensure that you have featureCounts installed on your machine.
+
+> python generate_raw_counts.py --alignment_tool star --reference hg19 --path_start /gpfs/work/nxa176 Sample_info.txt
+
+These raw counts can be used for a basic edgeR analysis using the script edgeR_diff_exp_analysis.R.  This script will do a non-specific filtering to remove genes will no expression. It then does a TMM normalization and fits a log linear model to generate differentially expressed genes which are represented by a volcano plot. The script also includes a module to adjust for race, sex and age of the sample and generate significant differentially expressed genes from the model accounting for these parameters. 
