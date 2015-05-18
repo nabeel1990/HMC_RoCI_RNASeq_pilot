@@ -1,5 +1,5 @@
 <H1>
-RNA-Seq Differential Expression Report 
+RNA-Seq Differential Expression Report
 </H1>
 
 <<id,echo=FALSE>>=
@@ -148,27 +148,6 @@ for (j in c(1:length(comparisons))){
 @
 
 <H3>
-Heatmap of All Differentially Expressed Genes
-</H3>
-<<significant.results.heatmap,echo=FALSE,results=hide,fig=FALSE>>=
-#Make heatmap plot with *all* significant DE genes for any comparison groups
-top_cuff_genes <- unique(all_sig_genes)
-top_genes_with_loc <- subset(gene_features[,c(1,4,5)], gene_id %in% top_cuff_genes)
-write.table(top_genes_with_loc, file=paste(path.start,"/",curr.batch,"_DE_Report/",curr.batch,"_Significant_DE_gene_list.txt", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE)
-cuff_top_gene_set <- getGenes(cuff_data, top_cuff_genes)
-png("HeatMap_TopGenes.png", width=5, height=5, units="in", res=180)
-par(mai=c(2,0.5,0.5,0.5))
-print(csHeatmap(cuff_top_gene_set, cluster = "row", labRow=F))
-dev.off()
-HTML(paste("<OBJECT data=\"HeatMap_TopGenes.png\" type=\"image/png\">\n</OBJECT>\n", sep=""))
-png("HeatMap_TopGenes_Replicates.png", width=5, height=5, units="in", res=180)
-par(mai=c(2,0.5,0.5,0.5))
-print(csHeatmap(cuff_top_gene_set, cluster = "row", replicates=TRUE, labRow=F))
-dev.off()
-HTML(paste("<OBJECT data=\"HeatMap_TopGenes_Replicates.png\" type=\"image/png\">\n</OBJECT>\n", sep=""))
-@
-
-<H3>
 Number of Differentially Expressed Genes For All Groups Compared
 </H3>
 <<significant.gene.overview,echo=FALSE,results=hide,fig=FALSE>>=
@@ -220,6 +199,27 @@ for (j in c(1:length(top_cuff_genes_for_plot))){
 	   }
 	}
 }
+@
+
+<H3>
+Heatmap of All Differentially Expressed Genes
+</H3>
+<<significant.results.heatmap,echo=FALSE,results=hide,fig=FALSE>>=
+#Make heatmap plot with *all* significant DE genes for any comparison groups
+top_cuff_genes <- unique(all_sig_genes)
+top_genes_with_loc <- subset(gene_features[,c(1,4,5)], gene_id %in% top_cuff_genes)
+write.table(top_genes_with_loc, file=paste(path.start,"/",curr.batch,"_DE_Report/",curr.batch,"_Significant_DE_gene_list.txt", sep=""), col.names=FALSE, row.names=FALSE, quote=FALSE)
+cuff_top_gene_set <- getGenes(cuff_data, top_cuff_genes)
+png("HeatMap_TopGenes.png", width=5, height=5, units="in", res=180)
+par(mai=c(2,0.5,0.5,0.5))
+print(csHeatmap(cuff_top_gene_set, cluster = "row", labRow=F))
+dev.off()
+HTML(paste("<OBJECT data=\"HeatMap_TopGenes.png\" type=\"image/png\">\n</OBJECT>\n", sep=""))
+png("HeatMap_TopGenes_Replicates.png", width=5, height=5, units="in", res=180)
+par(mai=c(2,0.5,0.5,0.5))
+print(csHeatmap(cuff_top_gene_set, cluster = "row", replicates=TRUE, labRow=F))
+dev.off()
+HTML(paste("<OBJECT data=\"HeatMap_TopGenes_Replicates.png\" type=\"image/png\">\n</OBJECT>\n", sep=""))
 @
 
 
