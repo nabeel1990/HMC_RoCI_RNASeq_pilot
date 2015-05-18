@@ -2,7 +2,7 @@
 import sys
 import subprocess
 import os
-from rnaseq_align_and_qc import *
+from Step1_QC_alignment import *
 
 
 def read_rnaseqmetrics(fin):
